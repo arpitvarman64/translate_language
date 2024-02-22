@@ -32,10 +32,9 @@ const Translate = () => {
           }
         );
         setSupportedLanguages(response.data);
-
-        setIsLoading(false);
       } catch (error) {
         console.error("Failed to fetch supported languages:", error);
+      } finally {
         setIsLoading(false);
       }
     };
@@ -45,6 +44,7 @@ const Translate = () => {
 
   const handleTranslate = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.post(
         "https://google-translate113.p.rapidapi.com/api/v1/translator/text",
         {
@@ -62,10 +62,10 @@ const Translate = () => {
         }
       );
       setTranslatedText(response.data.trans);
-      
     } catch (error) {
       console.error("Translation failed:", error);
-      
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -98,7 +98,6 @@ const Translate = () => {
               onChange={(e) => setFromLanguage(e.target.value)}
             />
           </Grid>
-          
           <Grid item xs={12} sm={6}>
             <Typography variant="h4">Translated Text</Typography>
             <TextareaAutosize
@@ -108,7 +107,7 @@ const Translate = () => {
               readOnly
             />
           </Grid>
-          <Grid item xs={12} sm={6}  >
+          <Grid item xs={12} sm={6}>
             <Typography variant="h4">Translate to</Typography>
             <TextField
               fullWidth
@@ -144,8 +143,9 @@ const Translate = () => {
             padding: "10px 20px",
           }}
           onClick={handleTranslate}
+          disabled={isLoading} // Disable button when loading
         >
-          Translate
+          {isLoading ? "Translating..." : "Translate"} 
         </Button>
       </Box>
     </div>
